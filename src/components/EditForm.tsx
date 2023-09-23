@@ -13,9 +13,10 @@ import {
 } from '../schema/CelebFormSchema';
 
 const EditForm = ({ celeb }: { celeb: TCelebrity }) => {
+	const { setIsEditing, editCeleb } = useCelebState();
+
 	const age = calculateAge(celeb.dob);
 
-	const { setIsEditing } = useCelebState();
 	const [formState, setFormState] = useState<TCelebForm>({
 		fullName: `${celeb.first} ${celeb.last}`,
 		age: age,
@@ -31,7 +32,9 @@ const EditForm = ({ celeb }: { celeb: TCelebrity }) => {
 
 		if (results.success) {
 			// todo change global state
+			editCeleb(celeb.id, formState);
 			setIsEditing(false);
+			console.log('submit success');
 			return;
 		}
 		// todo show toast
@@ -48,7 +51,7 @@ const EditForm = ({ celeb }: { celeb: TCelebrity }) => {
 				theme: 'dark',
 			});
 		}
-		console.log('submitted');
+		console.log('submit failure');
 	};
 
 	const onChangeHandler = (

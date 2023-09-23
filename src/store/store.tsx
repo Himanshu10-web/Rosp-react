@@ -8,6 +8,8 @@ import {
 } from 'react';
 
 import { TCelebrity } from '../components/AccordionItem';
+import { TCelebForm } from '../schema/CelebFormSchema';
+import calculateDOBFromAge from '../utils/calculateDOBFromAge';
 
 type TCelebDataContext = {
 	celebData: TCelebrity[] | null;
@@ -20,6 +22,7 @@ type TCelebDataContext = {
 	deleteCeleb: () => void;
 	isModalOpen: boolean;
 	setIsModalOpen: Dispatch<SetStateAction<boolean>>;
+	editCeleb: (id: number, editedContent: TCelebForm) => void;
 };
 
 export const CelebDataContext = createContext<TCelebDataContext | null>(null);
@@ -43,9 +46,32 @@ export function CelebDataContextProvider({
 	const deleteCeleb = () => {
 		setCelebData((prev: TCelebrity[] | null) => {
 			if (!prev) return null;
-			return prev?.filter((celeb) => celeb.id !== selected);
+			return prev.filter((celeb) => celeb.id !== selected);
 		});
 		setIsModalOpen(false);
+	};
+
+	const editCeleb = (id: number, editedContent: TCelebForm) => {
+		setCelebData((prev: TCelebrity[] | null) => {
+			if (!prev) return null;
+			return prev.map((celeb) => {
+				if (celeb.id === id) {
+					const [first, ...rest] = editedContent.fullName.split(' ');
+					const last = rest.join(' ');
+					const dob = calculateDOBFromAge(editedContent.age);
+					return {
+						...celeb,
+						first,
+						last,
+						dob,
+						country: editedContent.country,
+						gender: editedContent.gender,
+						description: editedContent.description,
+					};
+				}
+				return celeb;
+			});
+		});
 	};
 
 	return (
@@ -61,6 +87,7 @@ export function CelebDataContextProvider({
 				deleteCeleb,
 				isModalOpen,
 				setIsModalOpen,
+				editCeleb,
 			}}>
 			{children}
 		</CelebDataContext.Provider>
