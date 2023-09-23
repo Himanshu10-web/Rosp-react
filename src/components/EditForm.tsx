@@ -1,13 +1,23 @@
+import { SyntheticEvent } from 'react';
 import { ChevronUp, CheckCircle2, XCircle } from 'lucide-react';
 
 import cn from '../utils/cn';
 import { TCelebrity } from './AccordionItem';
 import calculateAge from '../utils/calculateAge';
+import { useCelebState } from '../store/store';
 
 const EditForm = ({ celeb }: { celeb: TCelebrity }) => {
+	const { setIsEditing } = useCelebState();
+
+	const submitHandler = (e: SyntheticEvent) => {
+		e.preventDefault();
+		console.log('submitted');
+	};
+
 	return (
-		<div
+		<form
 			key={celeb.id}
+			onSubmit={submitHandler}
 			className='border border-gray-600 rounded-lg px-4 py-2 text-sm'>
 			<div className='flex w-full gap-4 items-center cursor-pointer text-lg'>
 				<img src={celeb.picture} alt='' className='rounded-full h-12' />
@@ -67,11 +77,19 @@ const EditForm = ({ celeb }: { celeb: TCelebrity }) => {
 					</textarea>
 				</div>
 				<div className='flex justify-end gap-4 mt-4'>
-					<XCircle className='text-red-400 hover:text-red-600 transition cursor-pointer' />
-					<CheckCircle2 className='text-green-400 hover:text-green-600 transition cursor-pointer' />
+					<XCircle
+						className='text-red-400 hover:text-red-600 transition cursor-pointer'
+						onClick={() => setIsEditing(false)}
+					/>
+					<button type='submit'>
+						<CheckCircle2
+							className='text-green-400 hover:text-green-600 transition cursor-pointer'
+							onClick={() => setIsEditing(false)}
+						/>
+					</button>
 				</div>
 			</div>
-		</div>
+		</form>
 	);
 };
 

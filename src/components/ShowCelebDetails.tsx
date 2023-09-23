@@ -1,23 +1,25 @@
 import cn from '../utils/cn';
 import { ChevronDown, ChevronUp, Trash2, Pencil } from 'lucide-react';
 import calculateAge from '../utils/calculateAge';
-import { TCelebProps } from './AccordionItem';
-
-type TShowCelebDetailsProps = TCelebProps & { isSelected: boolean };
+import { useCelebState } from '../store/store';
+import { TCelebrity } from './AccordionItem';
 
 const ShowCelebDetails = ({
 	celeb,
-	accordionToggle,
 	isSelected,
-	setIsEditing,
-}: TShowCelebDetailsProps) => {
+}: {
+	celeb: TCelebrity;
+	isSelected: boolean;
+}) => {
+	const { isEditing, setIsEditing, accordionToggle } = useCelebState();
+
 	return (
 		<div
 			key={celeb.id}
 			className='border border-gray-600 rounded-lg px-4 py-2 text-sm'>
 			<div
 				className='flex w-full gap-4 items-center cursor-pointer text-lg'
-				onClick={() => accordionToggle(celeb.id)}>
+				onClick={() => accordionToggle(celeb.id, isEditing)}>
 				<img src={celeb.picture} alt='' className='rounded-full h-12' />
 				<p className='font-bold'>
 					{celeb.first} {celeb.last}

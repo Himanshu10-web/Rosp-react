@@ -1,7 +1,6 @@
-import { Dispatch } from 'react';
-
 import EditForm from './EditForm';
 import ShowCelebDetails from './ShowCelebDetails';
+import { useCelebState } from '../store/store';
 
 export type TCelebrity = {
 	id: number;
@@ -15,34 +14,14 @@ export type TCelebrity = {
 	description: string;
 };
 
-export type TCelebProps = {
-	celeb: TCelebrity;
-	accordionToggle: (id: number) => void;
-	setIsEditing: Dispatch<React.SetStateAction<boolean>>;
-};
+const AccordionItem = ({ celeb }: { celeb: TCelebrity }) => {
+	const { isEditing, selected } = useCelebState();
 
-type TAccordionItemProps = TCelebProps & {
-	selected: number | undefined;
-	isEditing: boolean;
-};
-
-const AccordionItem = ({
-	celeb,
-	selected,
-	accordionToggle,
-	isEditing,
-	setIsEditing,
-}: TAccordionItemProps) => {
 	const isSelected = selected === celeb.id;
+
 	if (isEditing && isSelected) return <EditForm celeb={celeb} />;
-	return (
-		<ShowCelebDetails
-			accordionToggle={accordionToggle}
-			celeb={celeb}
-			isSelected={isSelected}
-			setIsEditing={setIsEditing}
-		/>
-	);
+
+	return <ShowCelebDetails celeb={celeb} isSelected={isSelected} />;
 };
 
 export default AccordionItem;
