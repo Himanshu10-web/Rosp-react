@@ -17,6 +17,9 @@ type TCelebDataContext = {
 	selected: number | null;
 	setSelected: Dispatch<SetStateAction<number | null>>;
 	accordionToggle: (id: number, isEditing: boolean) => void;
+	deleteCeleb: () => void;
+	isModalOpen: boolean;
+	setIsModalOpen: Dispatch<SetStateAction<boolean>>;
 };
 
 export const CelebDataContext = createContext<TCelebDataContext | null>(null);
@@ -27,13 +30,22 @@ export function CelebDataContextProvider({
 	children: ReactElement;
 }) {
 	const [celebData, setCelebData] = useState<TCelebrity[] | null>(null);
-	const [selected, setSelected] = useState<number | null>(1);
+	const [selected, setSelected] = useState<number | null>(null);
 	const [isEditing, setIsEditing] = useState(false);
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const accordionToggle = (id: number, isEditing: boolean) => {
 		if (isEditing) return;
 		if (id === selected) setSelected(null);
 		else setSelected(id);
+	};
+
+	const deleteCeleb = () => {
+		setCelebData((prev: TCelebrity[] | null) => {
+			if (!prev) return null;
+			return prev?.filter((celeb) => celeb.id !== selected);
+		});
+		setIsModalOpen(false);
 	};
 
 	return (
@@ -46,6 +58,9 @@ export function CelebDataContextProvider({
 				selected,
 				setSelected,
 				accordionToggle,
+				deleteCeleb,
+				isModalOpen,
+				setIsModalOpen,
 			}}>
 			{children}
 		</CelebDataContext.Provider>

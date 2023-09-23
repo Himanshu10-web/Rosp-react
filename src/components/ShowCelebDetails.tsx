@@ -1,5 +1,6 @@
-import cn from '../utils/cn';
 import { ChevronDown, ChevronUp, Trash2, Pencil } from 'lucide-react';
+
+import cn from '../utils/cn';
 import calculateAge from '../utils/calculateAge';
 import { useCelebState } from '../store/store';
 import { TCelebrity } from './AccordionItem';
@@ -11,7 +12,14 @@ const ShowCelebDetails = ({
 	celeb: TCelebrity;
 	isSelected: boolean;
 }) => {
-	const { isEditing, setIsEditing, accordionToggle } = useCelebState();
+	const { isEditing, setIsEditing, accordionToggle, setIsModalOpen } =
+		useCelebState();
+
+	const age = calculateAge(celeb.dob);
+	const setEditState = () => {
+		if (age > 18) setIsEditing(true);
+		else return;
+	};
 
 	return (
 		<div
@@ -39,7 +47,7 @@ const ShowCelebDetails = ({
 				<div className='grid grid-cols-3 my-4'>
 					<div>
 						<p className='text-gray-400'>Age</p>
-						<p>{calculateAge(celeb.dob)} years</p>
+						<p>{age} years</p>
 					</div>
 					<div>
 						<p className='text-gray-400'>Gender</p>
@@ -55,10 +63,13 @@ const ShowCelebDetails = ({
 					<p>{celeb.description}</p>
 				</div>
 				<div className='flex justify-end gap-4 mt-4'>
-					<Trash2 className='text-red-400 hover:text-red-600 transition cursor-pointer' />
+					<Trash2
+						className='text-red-400 hover:text-red-600 transition cursor-pointer'
+						onClick={() => setIsModalOpen(true)}
+					/>
 					<Pencil
 						className='text-blue-400 hover:text-blue-600 transition cursor-pointer'
-						onClick={() => setIsEditing(true)}
+						onClick={setEditState}
 					/>
 				</div>
 			</div>
