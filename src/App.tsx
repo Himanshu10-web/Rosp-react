@@ -9,7 +9,7 @@ function App() {
 	const { celebData, setCelebData } = useCelebState();
 
 	const fetchData = useCallback(async () => {
-		const response = await fetch('./src/data/celebrities.json');
+		const response = await fetch('/data/celebrities.json');
 		const data = await response.json();
 		setCelebData(data);
 	}, [setCelebData]);
