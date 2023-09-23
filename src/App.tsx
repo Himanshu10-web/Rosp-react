@@ -1,4 +1,7 @@
 import { useEffect, useCallback } from 'react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import Accordion from './components/Accordion';
 import { useCelebState } from './store/store';
 
@@ -29,6 +32,7 @@ function App() {
 					<div key={el.id}>{el.first}</div>
 				))}
 			</pre> */}
+			<ToastContainer />
 		</main>
 	);
 }

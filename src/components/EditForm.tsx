@@ -1,17 +1,65 @@
-import { SyntheticEvent } from 'react';
+import { ChangeEvent, SyntheticEvent, useState } from 'react';
 import { ChevronUp, CheckCircle2, XCircle } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 import cn from '../utils/cn';
 import { TCelebrity } from './AccordionItem';
 import calculateAge from '../utils/calculateAge';
 import { useCelebState } from '../store/store';
+import {
+	CelebFormSchema,
+	TCelebForm,
+	validGender,
+} from '../schema/CelebFormSchema';
 
 const EditForm = ({ celeb }: { celeb: TCelebrity }) => {
-	const { setIsEditing } = useCelebState();
+	const age = calculateAge(celeb.dob);
 
-	const submitHandler = (e: SyntheticEvent) => {
-		e.preventDefault();
+	const { setIsEditing } = useCelebState();
+	const [formState, setFormState] = useState<TCelebForm>({
+		fullName: `${celeb.first} ${celeb.last}`,
+		age: age,
+		country: celeb.country,
+		description: celeb.description,
+		gender: celeb.gender as (typeof validGender)[number],
+	});
+
+	const submitHandler = (event: SyntheticEvent) => {
+		event.preventDefault();
+
+		const results = CelebFormSchema.safeParse(formState);
+
+		if (results.success) {
+			// todo change global state
+			setIsEditing(false);
+			return;
+		}
+		// todo show toast
+		const issues = results.error.issues;
+		for (let i = 0; i < issues.length; i++) {
+			toast.error(issues[i].message, {
+				position: 'bottom-right',
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: 'dark',
+			});
+		}
 		console.log('submitted');
+	};
+
+	const onChangeHandler = (
+		event: ChangeEvent<
+			HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+		>
+	) => {
+		const key = event.target.name;
+		const value = key === 'age' ? +event.target.value : event.target.value;
+		console.log({ key, value });
+		setFormState((prev) => ({ ...prev, [key]: value }));
 	};
 
 	return (
@@ -21,9 +69,10 @@ const EditForm = ({ celeb }: { celeb: TCelebrity }) => {
 			<div className='flex w-full gap-4 items-center cursor-pointer text-lg'>
 				<img src={celeb.picture} alt='' className='rounded-full h-12' />
 				<input
-					name='name'
+					name='fullName'
 					className='font-bold'
-					value={`${celeb.first} ${celeb.last}`}></input>
+					value={formState.fullName}
+					onChange={onChangeHandler}></input>
 				<span className='ml-auto'>
 					<ChevronUp />
 				</span>
@@ -43,7 +92,8 @@ const EditForm = ({ celeb }: { celeb: TCelebrity }) => {
 								type='number'
 								name='age'
 								id='age'
-								value={calculateAge(celeb.dob)}
+								onChange={onChangeHandler}
+								value={formState.age}
 							/>
 						</p>
 					</div>
@@ -51,7 +101,11 @@ const EditForm = ({ celeb }: { celeb: TCelebrity }) => {
 						<label htmlFor='gender' className='text-gray-400'>
 							Gender
 						</label>
-						<select name='gender' id='gender'>
+						<select
+							name='gender'
+							id='gender'
+							onChange={onChangeHandler}
+							defaultValue={formState.gender}>
 							<option value='male'>Male</option>
 							<option value='female'>Female</option>
 							<option value='transgender'>Transgender</option>
@@ -64,15 +118,24 @@ const EditForm = ({ celeb }: { celeb: TCelebrity }) => {
 						<label htmlFor='country' className='text-gray-400'>
 							Country
 						</label>
-						<input id='country' value={celeb.country} />
+						<input
+							id='country'
+							name='country'
+							value={formState.country}
+							onChange={onChangeHandler}
+						/>
 					</div>
 				</div>
 				<div className='flex flex-col'>
 					<label htmlFor='description' className='text-gray-400'>
 						Description
 					</label>
-					<textarea id='description' rows={5}>
-						{celeb.description}
+					<textarea
+						id='description'
+						name='description'
+						rows={5}
+						onChange={onChangeHandler}>
+						{formState.description}
 					</textarea>
 				</div>
 				<div className='flex justify-end gap-4 mt-4'>
@@ -81,10 +144,7 @@ const EditForm = ({ celeb }: { celeb: TCelebrity }) => {
 						onClick={() => setIsEditing(false)}
 					/>
 					<button type='submit'>
-						<CheckCircle2
-							className='text-green-400 hover:text-green-600 transition cursor-pointer'
-							onClick={() => setIsEditing(false)}
-						/>
+						<CheckCircle2 className='text-green-400 hover:text-green-600 transition cursor-pointer' />
 					</button>
 				</div>
 			</div>
