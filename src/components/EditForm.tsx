@@ -16,7 +16,6 @@ const EditForm = ({ celeb }: { celeb: TCelebrity }) => {
 
 	return (
 		<form
-			key={celeb.id}
 			onSubmit={submitHandler}
 			className='border border-gray-600 rounded-lg px-4 py-2 text-sm'>
 			<div className='flex w-full gap-4 items-center cursor-pointer text-lg'>

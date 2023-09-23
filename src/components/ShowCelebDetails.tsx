@@ -4,6 +4,7 @@ import cn from '../utils/cn';
 import calculateAge from '../utils/calculateAge';
 import { useCelebState } from '../store/store';
 import { TCelebrity } from './AccordionItem';
+import capitalizeFirstLetter from '../utils/capitalizeFirstLetter';
 
 const ShowCelebDetails = ({
 	celeb,
@@ -16,15 +17,15 @@ const ShowCelebDetails = ({
 		useCelebState();
 
 	const age = calculateAge(celeb.dob);
+	const gender = capitalizeFirstLetter(celeb.gender);
+
 	const setEditState = () => {
 		if (age > 18) setIsEditing(true);
 		else return;
 	};
 
 	return (
-		<div
-			key={celeb.id}
-			className='border border-gray-600 rounded-lg px-4 py-2 text-sm'>
+		<div className='border border-gray-600 rounded-lg px-4 py-2 text-sm'>
 			<div
 				className='flex w-full gap-4 items-center cursor-pointer text-lg'
 				onClick={() => accordionToggle(celeb.id, isEditing)}>
@@ -51,7 +52,7 @@ const ShowCelebDetails = ({
 					</div>
 					<div>
 						<p className='text-gray-400'>Gender</p>
-						<p>{celeb.gender}</p>
+						<p>{gender}</p>
 					</div>
 					<div>
 						<p className='text-gray-400'>Country</p>
