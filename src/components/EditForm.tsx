@@ -11,6 +11,7 @@ import {
 	TCelebForm,
 	validGender,
 } from '../schema/CelebFormSchema';
+import toastConfig from '../config/toastConfig';
 
 const EditForm = ({ celeb }: { celeb: TCelebrity }) => {
 	const { setIsEditing, editCeleb } = useCelebState();
@@ -40,16 +41,7 @@ const EditForm = ({ celeb }: { celeb: TCelebrity }) => {
 		// todo show toast
 		const issues = results.error.issues;
 		for (let i = 0; i < issues.length; i++) {
-			toast.error(issues[i].message, {
-				position: 'bottom-right',
-				autoClose: 5000,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: 'dark',
-			});
+			toast.error(issues[i].message, toastConfig);
 		}
 		console.log('submit failure');
 	};
