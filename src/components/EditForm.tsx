@@ -32,18 +32,15 @@ const EditForm = ({ celeb }: { celeb: TCelebrity }) => {
 		const results = CelebFormSchema.safeParse(formState);
 
 		if (results.success) {
-			// todo change global state
 			editCeleb(celeb.id, formState);
 			setIsEditing(false);
-			console.log('submit success');
+			toast.success('Successfully Edited', toastConfig);
 			return;
 		}
-		// todo show toast
 		const issues = results.error.issues;
 		for (let i = 0; i < issues.length; i++) {
 			toast.error(issues[i].message, toastConfig);
 		}
-		console.log('submit failure');
 	};
 
 	const onChangeHandler = (
